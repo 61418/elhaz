@@ -8,6 +8,7 @@ license = { text = "MPL-2.0" }
 dependencies = [
     "boto3-refresh-session==10.0.2",
     "prompt-toolkit>=3.0.52",
+    "pydantic>=2.12.5",
     "pygments>=2.19.2",
     "questionary>=2.1.1",
     "ruamel-yaml>=0.19.1",
