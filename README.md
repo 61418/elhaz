@@ -107,7 +107,7 @@ You can also pass `assume` to `credential_process` in your AWS profile. So long 
 credential_process="assume export -n <your config name> -f credential-process"
 ```
 
-With the daemon humming quietly in the background, you could also initialize a `Client` from a Python script and interact with the daemon that way instead of using the CLI.
+With the daemon humming quietly in the background, you could also initialize a `Client` from a Python script and interact with the daemon that way _instead of using the CLI_.
 
 ```python
 from assume.constants import Constants
