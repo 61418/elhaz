@@ -45,6 +45,54 @@ If you need to resync after pulling updates from the beta branch, run:
 uv sync
 ```
 
+## Quickstart
+
+Create a config.
+
+```bash
+assume config add
+```
+
+`assume` will interactively help you create the config. The only required parameter is `RoleArn`. 
+
+Next, start the daemon.
+
+```bash
+assume daemon start
+```
+
+Now, you can perform all kinds of operations.
+
+You can export your automatically refreshed temporary AWS credenitals to stdout.
+
+```bash
+assume export -n <your config name>
+```
+
+Or execute a one-off AWS command using those credentials.
+
+```bash
+assume exec -n <your config name> --- aws s3 ls
+```
+
+Or initialize a shell and run as many AWS commands as you want, for however long you like.
+
+```bash
+assume shell -n <your config name>
+```
+
+If you have an existential identity crisis and forget who you are, fret not.
+
+```bash
+assume whoami -n <your config name>
+```
+
+You can also pass `assume` to `credential_process` in your AWS profile. So long as the `assume` daemon is running, `credential_process` will receive the credentials from stdout.
+
+```
+credential_process=assume export -n <your config name> -f credential-process
+```
+
 ## Commands
 
 ```
