@@ -1,6 +1,7 @@
 __all__ = [
     "AssumeAlreadyExistsError",
     "AssumeBadRequestError",
+    "AssumeDaemonError",
     "AssumeNotFoundError",
     "AssumeValidationError",
     "BaseAssumeError",

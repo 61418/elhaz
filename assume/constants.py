@@ -1,5 +1,6 @@
 __all__ = ["Constants"]
 
+import uuid
 from pathlib import Path
 
 from assume.exceptions import AssumeValidationError
@@ -26,7 +27,7 @@ class Constants:
 
     _config_dir: Path = Path.home() / ".assume/configs"
     _config_file_extension: str = ".yaml"
-    _socket_path: Path = Path("/tmp/assume.sock")
+    _socket_path: Path = Path(f"/tmp/assume-{uuid.uuid4().hex}.sock")
     _max_unix_socket_connections: int = 5
 
     @property

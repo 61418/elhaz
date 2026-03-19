@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MPL-2.0" }
 dependencies = [
-    "boto3-refresh-session==10.0.2",
+    "boto3-refresh-session==10.0.4",
     "prompt-toolkit>=3.0.52",
     "pydantic>=2.12.5",
     "pygments>=2.19.2",

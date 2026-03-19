@@ -1,4 +1,6 @@
 import json
+import os
+import signal
 import socket
 import threading
 import time
@@ -413,3 +415,62 @@ def test_client_wraps_connection_error(constants):
     """Client.__init__ must raise AssumeDaemonError when no daemon listens."""
     with pytest.raises(AssumeDaemonError, match="Could not connect"):
         Client(constants)
+
+
+# ---------------------------------------------------------------------------
+# Graceful shutdown
+# ---------------------------------------------------------------------------
+
+
+def test_stop_before_run_does_not_raise(constants, service):
+    """stop() must be safe to call before run() is ever invoked.
+
+    Exercises the self._sock None-guard and atexit-registered stop().
+    """
+    server = Server(constants, service)
+    server.stop()  # must not raise
+    assert not constants.socket_path.exists()
+
+
+def test_signal_handlers_unchanged_from_non_main_thread(constants, service):
+    """Signal handlers must not be modified when run() runs in a thread.
+
+    All other tests call run() from a daemon thread, so this verifies
+    the threading.main_thread() guard is in place.
+    """
+    before_sigterm = signal.getsignal(signal.SIGTERM)
+    before_sigint = signal.getsignal(signal.SIGINT)
+
+    server = Server(constants, service)
+    thread = threading.Thread(target=server.run, daemon=True)
+    thread.start()
+    _wait_for_socket(constants.socket_path)
+    server.stop()
+    thread.join(timeout=2)
+
+    assert signal.getsignal(signal.SIGTERM) is before_sigterm
+    assert signal.getsignal(signal.SIGINT) is before_sigint
+
+
+def test_sigterm_shuts_down_server(constants, service):
+    """SIGTERM triggers clean shutdown when run() is called from main thread.
+
+    Delivers SIGTERM to the current process from a timer thread. The
+    signal is received in the main thread (where run() is blocked) and
+    the registered handler calls stop(), causing the accept loop to exit.
+    Original signal handlers are restored before this test returns.
+    """
+    server = Server(constants, service)
+
+    # Fire SIGTERM after the server is listening. The 0.5 s accept()
+    # timeout means run() exits within ~0.7 s of the signal.
+    timer = threading.Timer(
+        0.2, lambda: os.kill(os.getpid(), signal.SIGTERM)
+    )
+    timer.start()
+    try:
+        server.run()  # blocks in the main thread
+    finally:
+        timer.cancel()
+
+    assert not constants.socket_path.exists()

@@ -2,8 +2,10 @@
 
 __all__ = ["Client", "DaemonService", "Server"]
 
+import atexit
 import logging
 import os
+import signal
 import socket
 import threading
 from typing import Any, Dict
@@ -109,6 +111,56 @@ class DaemonService:
                 )
             return dict(session.session.credentials)
 
+    def dispatch(self, request: RequestModel) -> Any:
+        """Route a validated request to the appropriate handler.
+
+        Parameters
+        ----------
+        request : RequestModel
+            The incoming protocol request.
+
+        Returns
+        -------
+        Any
+            The handler's return value, used as the response ``data``
+            field.
+
+        Raises
+        ------
+        AssumeBadRequestError
+            If a required payload field is missing or the action is
+            unknown.
+        AssumeNotFoundError
+            If the requested session does not exist.
+        """
+
+        payload = request.payload
+
+        def _cfg() -> str:
+            try:
+                return payload["config"]
+            except KeyError:
+                raise AssumeBadRequestError(
+                    f"Action '{request.action}' requires"
+                    " payload field 'config'."
+                )
+
+        match request.action:
+            case "add":
+                return self.add(_cfg())
+            case "credentials":
+                return self.credentials(_cfg())
+            case "list":
+                return self.list()
+            case "remove":
+                return self.remove(_cfg())
+            case "whoami":
+                return self.whoami(_cfg())
+            case _:
+                raise AssumeBadRequestError(
+                    f"Unknown action: '{request.action}'"
+                )
+
     def list(self) -> list[str]:
         """Return the names of all cached sessions.
 
@@ -176,56 +228,6 @@ class DaemonService:
             result.pop("ResponseMetadata", None)
             return result
 
-    def dispatch(self, request: RequestModel) -> Any:
-        """Route a validated request to the appropriate handler.
-
-        Parameters
-        ----------
-        request : RequestModel
-            The incoming protocol request.
-
-        Returns
-        -------
-        Any
-            The handler's return value, used as the response ``data``
-            field.
-
-        Raises
-        ------
-        AssumeBadRequestError
-            If a required payload field is missing or the action is
-            unknown.
-        AssumeNotFoundError
-            If the requested session does not exist.
-        """
-
-        payload = request.payload
-
-        def _cfg() -> str:
-            try:
-                return payload["config"]
-            except KeyError:
-                raise AssumeBadRequestError(
-                    f"Action '{request.action}' requires"
-                    " payload field 'config'."
-                )
-
-        match request.action:
-            case "add":
-                return self.add(_cfg())
-            case "credentials":
-                return self.credentials(_cfg())
-            case "list":
-                return self.list()
-            case "remove":
-                return self.remove(_cfg())
-            case "whoami":
-                return self.whoami(_cfg())
-            case _:
-                raise AssumeBadRequestError(
-                    f"Unknown action: '{request.action}'"
-                )
-
 
 class Server:
     """UNIX socket server that accepts connections and dispatches to
@@ -260,6 +262,10 @@ class Server:
         self._connections: set[socket.socket] = set()
         self._running = threading.Event()
 
+        # initialise to None so stop() is safe if __init__ fails partway
+        # through (e.g. _prepare_socket_path raises) and atexit fires.
+        self._sock: socket.socket | None = None
+
         self._prepare_socket_path()
 
         self._sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
@@ -267,6 +273,7 @@ class Server:
         self._sock.settimeout(0.5)
         self._sock.listen(self._constants.max_unix_socket_connections)
         logger.info("Listening on %s", self._constants.socket_path)
+        atexit.register(self.stop)
 
     def _prepare_socket_path(self) -> None:
         """Validate and clear the socket path before binding.
@@ -305,7 +312,7 @@ class Server:
         try:
             probe.connect(str(path))
         except ConnectionRefusedError:
-            pass  # no listener — stale socket, fall through to unlink
+            ...  # no listener — stale socket, fall through to unlink
         except FileNotFoundError:
             return  # vanished between exists() and connect() — nothing to do
         except OSError as exc:
@@ -375,7 +382,7 @@ class Server:
             try:
                 self._send(conn_file, response)
             except OSError:
-                pass
+                ...
             return False
 
         # kill is a transport-layer concern: signal the server to stop
@@ -390,7 +397,7 @@ class Server:
                     ),
                 )
             except OSError:
-                pass
+                ...
             return True
 
         try:
@@ -417,7 +424,7 @@ class Server:
         try:
             self._send(conn_file, response)
         except OSError:
-            pass
+            ...
         return False
 
     def _handle_client(self, conn: socket.socket) -> None:
@@ -449,11 +456,27 @@ class Server:
     def run(self) -> None:
         """Start the accept loop. Blocks until :meth:`stop` is called.
 
+        When called from the main thread, installs handlers for
+        ``SIGTERM`` and ``SIGINT`` that call :meth:`stop`. The original
+        handlers are restored when this method returns. Signal
+        registration is skipped silently when called from any other
+        thread (e.g. in tests).
+
         Calls :meth:`stop` and joins all client threads on exit,
         regardless of how the loop exits.
         """
 
+        old_sigterm: Any = None
+        old_sigint: Any = None
+
+        if in_main := threading.current_thread() is threading.main_thread():
+            old_sigterm = signal.signal(
+                signal.SIGTERM, lambda s, f: self.stop()
+            )
+            old_sigint = signal.signal(signal.SIGINT, lambda s, f: self.stop())
+
         self._running.set()
+
         try:
             while self._running.is_set():
                 try:
@@ -474,6 +497,9 @@ class Server:
                     self._client_threads.add(thread)
                 thread.start()
         finally:
+            if in_main:
+                signal.signal(signal.SIGTERM, old_sigterm)
+                signal.signal(signal.SIGINT, old_sigint)
             self.stop()
             self._join_client_threads()
 
@@ -488,10 +514,11 @@ class Server:
 
         self._running.clear()
 
-        try:
-            self._sock.close()
-        except OSError:
-            pass
+        if self._sock is not None:
+            try:
+                self._sock.close()
+            except OSError:
+                ...
 
         with self._state_lock:
             connections = list(self._connections)
@@ -500,16 +527,16 @@ class Server:
             try:
                 conn.shutdown(socket.SHUT_RDWR)
             except OSError:
-                pass
+                ...
             try:
                 conn.close()
             except OSError:
-                pass
+                ...
 
         try:
             os.unlink(self._constants.socket_path)
         except FileNotFoundError:
-            pass
+            ...
 
 
 class Client:
@@ -590,11 +617,11 @@ class Client:
         try:
             self._conn_file.close()
         except OSError:
-            pass
+            ...
         try:
             self._sock.close()
         except OSError:
-            pass
+            ...
 
     def __enter__(self) -> "Client":
         return self
