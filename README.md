@@ -5,13 +5,6 @@
   />
 </p>
 
-<p align="center">
-  <img 
-    src="https://raw.githubusercontent.com/michaelthomasletts/assume-cli/refs/heads/main/docs/_static/transparent_header_assume.png" 
-    alt="assume" 
-  />
-</p>
-
 **ASSUME IS ACTIVELY UNDER DEVELOPMENT AND NOT YET READY FOR OFFICIAL RELEASE**
 
 **ACCORDINGLY, THIS REPOSITORY WILL CHANGE SUBSTANTIALLY UNTIL THE PROJECT REACHES A STABLE STATE AND IS OFFICIALLY RELEASED FOR USE**
