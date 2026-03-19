@@ -10,7 +10,7 @@ starting the background daemon process so both sides share the same
 configuration.
 """
 
-__all__: list[str] = []
+__all__ = []
 
 import os
 import subprocess
