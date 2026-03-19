@@ -18,6 +18,8 @@
 
 ## Description
 
+Think of `assume` as your own local AWS STS.
+
 `assume` is a CLI tool with a daemon for exposing automatically refreshed temporary AWS credentials via [boto3-refresh-session](https://github.com/61418/boto3-refresh-session) to shells, SDKs, tools, and more. assume uses a UNIX domain socket with an in-memory session cache and a simple refresh loop.
 
 ## Installation
