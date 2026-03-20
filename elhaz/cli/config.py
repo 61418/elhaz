@@ -47,13 +47,23 @@ _ASSUME_ROLE_OPTIONAL: list[tuple[str, str, type, str | None]] = [
 
 _STS_FIELDS: list[tuple[str, str, type, str | None]] = [
     ("region_name", "Region name", str, None),
-    ("endpoint_url", "STS endpoint URL", str, None),
     ("api_version", "API version", str, None),
+    ("use_ssl", "Use SSL?", bool, None),
+    ("verify", "Verify SSL?", bool, None),
+    ("endpoint_url", "STS endpoint URL", str, None),
+    ("aws_access_key_id", "AWS access key ID", str, None),
+    ("aws_secret_access_key", "AWS secret access key", str, None),
+    ("aws_session_token", "AWS session token", str, None),
+    ("aws_account_id", "AWS account ID", str, None),
 ]
 
 _SESSION_FIELDS: list[tuple[str, str, type, str | None]] = [
     ("region_name", "Region name", str, None),
     ("profile_name", "AWS profile name", str, None),
+    ("aws_account_id", "AWS account ID", str, None),
+    ("aws_access_key_id", "AWS access key ID", str, None),
+    ("aws_secret_access_key", "AWS secret access key", str, None),
+    ("aws_session_token", "AWS session token", str, None),
 ]
 
 

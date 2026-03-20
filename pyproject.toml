@@ -1,6 +1,6 @@
 [project]
 name = "elhaz"
-version = "0.1.0"
+version = "0.1.0a1"
 description = "A CLI and daemon for managing temporary AWS credentials via STS using boto3-refresh-session, exposing automatically refreshed credentials to shells, SDKs, tools, and more."
 readme = "README.md"
 requires-python = ">=3.10"
