@@ -1,16 +1,31 @@
-.. elhaz documentation master file, created by
-   sphinx-quickstart on Sun Mar  8 03:26:09 2026.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+elhaz
+-----
 
-elhaz documentation
-===================
+**Version:** |release|
 
-Add your content using ``reStructuredText`` syntax. See the
-`reStructuredText <https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html>`_
-documentation for details.
+**License:** `Mozilla Public License 2.0 <https://github.com/michaelthomasletts/elhaz/blob/main/LICENSE>`_
 
+**Author:** `Mike Letts <https://michaelthomasletts.com>`_
+
+**Maintainers:** `61418 <https://61418.io>`_
+
+What is elhaz?
+~~~~~~~~~~~~~~
+
+test
+
+Why this exists
+~~~~~~~~~~~~~~~
+
+test
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+   :maxdepth: 1
+   :caption: Sitemap
+   :name: sitemap
+   :hidden:
+
+   CLI <cli/index>
+   Concepts <concepts/index>
+   Installation <installation>
+   Quickstart <quickstart>

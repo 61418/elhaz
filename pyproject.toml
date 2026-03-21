@@ -28,6 +28,7 @@ keywords = [
 ]
 
 [project.urls]
+Documentation = "https://61418.io/elhaz"
 Issues = "https://github.com/michaelthomasletts/elhaz/issues"
 Repository = "https://github.com/michaelthomasletts/elhaz"
 
