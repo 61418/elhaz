@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.4](https://github.com/61418/elhaz/compare/v0.1.3...v0.1.4) (2026-03-22)
+
+
+### Bug Fixes
+
+* Fixing pyproject.toml. ([fff3624](https://github.com/61418/elhaz/commit/fff3624fb206479f47b50928899bde9ffd56481c))
+* Fixing pyproject.toml. ([7c7f038](https://github.com/61418/elhaz/commit/7c7f038739ff0f1275099ac2ae3cdd2d7482ce46))
+
 ## [0.1.3](https://github.com/61418/elhaz/compare/v0.1.2...v0.1.3) (2026-03-22)
 
 
