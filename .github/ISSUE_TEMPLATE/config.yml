@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/michaelthomasletts/elhaz/security/advisories/new
+    about: >
+      Do not open a public issue for security vulnerabilities. Use GitHub's
+      private advisory feature or email general@61418.io. See SECURITY.md for
+      details.
+  - name: Documentation
+    url: https://61418.io/elhaz
+    about: Check the docs before opening an issue — your question may already be answered.
