@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.0](https://github.com/61418/elhaz/compare/v0.2.0...v0.3.0) (2026-03-25)
+
+
+### Features
+
+* Extending --obscure flag to whoami ([4aa37a1](https://github.com/61418/elhaz/commit/4aa37a180a7a2ee1a7305eb5d45f0105c204f2ec))
+* Extending --obscure flag to whoami ([a130bd3](https://github.com/61418/elhaz/commit/a130bd3628176ca76a90158d1796500b4aa1ddd7))
+
 ## [0.2.0](https://github.com/61418/elhaz/compare/v0.1.8...v0.2.0) (2026-03-25)
 
 
