@@ -76,3 +76,8 @@ How do I remove a config from the daemon?
 -----------------------------------------
 
 Check the docs for :ref:`elhaz config remove <elhaz-config-remove>`.
+
+How do I see which AWS sessions are currently active in the daemon?
+-------------------------------------------------------------------
+
+Check the docs for :ref:`elhaz daemon list <elhaz-daemon-list>`.

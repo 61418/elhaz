@@ -342,6 +342,12 @@ def whoami_cmd(
     name: Optional[str] = typer.Option(
         None, "--name", "-n", help="Config name."
     ),
+    obscure_values: bool = typer.Option(
+        False,
+        "--obscure",
+        "-o",
+        help="Redact sensitive identity values (Account, Arn, UserId).",
+    ),
 ) -> None:
     """Return the STS caller identity for the specified config."""
 
@@ -374,7 +380,7 @@ def whoami_cmd(
                     )
                     print_error(msg)
                     raise typer.Exit(1)
-                whoami_cmd(name=name)
+                whoami_cmd(name=name, obscure_values=obscure_values)
                 return
         else:
             msg = (
@@ -383,7 +389,10 @@ def whoami_cmd(
             print_error(msg)
         raise typer.Exit(1)
 
-    print_json(response.data)
+    data = response.data
+    if obscure_values:
+        data = obscure(data)
+    print_json(data)
 
 
 def main() -> None:

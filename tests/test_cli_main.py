@@ -400,6 +400,47 @@ def test_whoami_non_404_error_exits_1(monkeypatch) -> None:
     assert "internal error" in result.output
 
 
+def test_whoami_obscure_redacts_identity(monkeypatch) -> None:
+    _install_fake_client(monkeypatch, [ok_response(data=FAKE_IDENTITY)])
+    result = runner.invoke(app, ["whoami", "--name", "demo", "--obscure"])
+    assert result.exit_code == 0
+    assert "123456789012" not in result.output
+    assert "AROATEST" not in result.output
+    assert "***" in result.output
+
+
+def test_whoami_obscure_short_flag(monkeypatch) -> None:
+    _install_fake_client(monkeypatch, [ok_response(data=FAKE_IDENTITY)])
+    result = runner.invoke(app, ["whoami", "-n", "demo", "-o"])
+    assert result.exit_code == 0
+    assert "123456789012" not in result.output
+    assert "***" in result.output
+
+
+def test_whoami_without_obscure_shows_identity(monkeypatch) -> None:
+    _install_fake_client(monkeypatch, [ok_response(data=FAKE_IDENTITY)])
+    result = runner.invoke(app, ["whoami", "--name", "demo"])
+    assert result.exit_code == 0
+    assert "123456789012" in result.output
+
+
+def test_whoami_obscure_propagates_through_auto_add(monkeypatch) -> None:
+    """--obscure is preserved through the 404 → add → retry path."""
+    _install_fake_client(
+        monkeypatch,
+        [
+            err_response(404, "no session"),
+            ok_response(data={"config": "demo"}),
+            ok_response(data=FAKE_IDENTITY),
+        ],
+    )
+    monkeypatch.setattr("elhaz.cli.__main__.ask_yes_no", lambda *a, **k: True)
+    result = runner.invoke(app, ["whoami", "--name", "demo", "--obscure"])
+    assert result.exit_code == 0
+    assert "123456789012" not in result.output
+    assert "***" in result.output
+
+
 def test_export_obscure_json_redacts_credentials(monkeypatch) -> None:
     _install_fake_client(monkeypatch, [ok_response(data=FAKE_CREDS)])
     result = runner.invoke(app, ["export", "--name", "demo", "--obscure"])
