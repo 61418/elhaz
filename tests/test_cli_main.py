@@ -398,3 +398,44 @@ def test_whoami_non_404_error_exits_1(monkeypatch) -> None:
     result = runner.invoke(app, ["whoami", "--name", "demo"])
     assert result.exit_code == 1
     assert "internal error" in result.output
+
+
+def test_export_obscure_json_redacts_credentials(monkeypatch) -> None:
+    _install_fake_client(monkeypatch, [ok_response(data=FAKE_CREDS)])
+    result = runner.invoke(app, ["export", "--name", "demo", "--obscure"])
+    assert result.exit_code == 0
+    assert "AKIATEST" not in result.output
+    assert "SUPERSECRET" not in result.output
+    assert "TOKEN123" not in result.output
+    assert "***" in result.output
+    # expiry_time is not sensitive — it must still appear
+    assert "2030-01-01T00:00:00Z" in result.output
+
+
+def test_export_obscure_short_flag(monkeypatch) -> None:
+    _install_fake_client(monkeypatch, [ok_response(data=FAKE_CREDS)])
+    result = runner.invoke(app, ["export", "-n", "demo", "-o"])
+    assert result.exit_code == 0
+    assert "AKIATEST" not in result.output
+    assert "***" in result.output
+
+
+def test_export_obscure_env_format_redacts_values(monkeypatch) -> None:
+    _install_fake_client(monkeypatch, [ok_response(data=FAKE_CREDS)])
+    result = runner.invoke(
+        app, ["export", "--name", "demo", "--format", "env", "--obscure"]
+    )
+    assert result.exit_code == 0
+    assert "AKIATEST" not in result.output
+    assert "SUPERSECRET" not in result.output
+    assert "TOKEN123" not in result.output
+    assert "AWS_ACCESS_KEY_ID=***" in result.output
+    assert "AWS_SECRET_ACCESS_KEY=***" in result.output
+    assert "AWS_SESSION_TOKEN=***" in result.output
+
+
+def test_export_without_obscure_shows_credentials(monkeypatch) -> None:
+    _install_fake_client(monkeypatch, [ok_response(data=FAKE_CREDS)])
+    result = runner.invoke(app, ["export", "--name", "demo"])
+    assert result.exit_code == 0
+    assert "AKIATEST" in result.output

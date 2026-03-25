@@ -15,6 +15,63 @@ from pygments.lexers import JsonLexer
 
 _FORMATTER = Terminal256Formatter(style="monokai")
 
+_REDACTED = "***"
+
+#: Field names whose values are redacted when ``--obscure`` is requested.
+#: Covers credential-bearing and ARN-bearing fields across ConfigModel
+#: sections (AssumeRole, STS, Session) and the raw export credential dict.
+SENSITIVE_FIELDS: frozenset[str] = frozenset(
+    {
+        # AssumeRole — contains account ID or shared secrets
+        "RoleArn",
+        "ExternalId",
+        "SerialNumber",
+        "TokenCode",
+        "PolicyArns",
+        # STS / Session — static credentials supplied to boto3
+        "aws_access_key_id",
+        "aws_secret_access_key",
+        "aws_session_token",
+        "aws_account_id",
+        # Raw export credential keys returned by the daemon
+        "access_key",
+        "secret_key",
+        "token",
+        # credential-process JSON shape (CredentialProcessModel)
+        "AccessKeyId",
+        "SecretAccessKey",
+        "SessionToken",
+    }
+)
+
+
+def obscure(data: Any) -> Any:
+    """Recursively redact sensitive field values in *data*.
+
+    Traverses dicts and lists. Any dict key present in
+    :data:`SENSITIVE_FIELDS` has its value replaced with ``"***"``.
+    All other values are returned unchanged.
+
+    Parameters
+    ----------
+    data : Any
+        JSON-serializable value, typically a ``dict`` or ``list``.
+
+    Returns
+    -------
+    Any
+        A new structure with sensitive values replaced by ``"***"``.
+    """
+
+    if isinstance(data, dict):
+        return {
+            k: _REDACTED if k in SENSITIVE_FIELDS else obscure(v)
+            for k, v in data.items()
+        }
+    if isinstance(data, list):
+        return [obscure(item) for item in data]
+    return data
+
 
 def print_json(data: Any) -> None:
     """Pretty-print *data* as syntax-highlighted JSON.

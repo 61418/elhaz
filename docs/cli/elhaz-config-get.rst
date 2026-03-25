@@ -23,6 +23,14 @@ Options
 ``--name``, ``-n`` *NAME*
    Config name. If omitted, an interactive selection prompt is shown.
 
+``--obscure``, ``-o``
+   Redact sensitive field values in the output. Affected fields include
+   ``RoleArn``, ``ExternalId``, ``SerialNumber``, ``TokenCode``,
+   ``PolicyArns``, and any static AWS credentials
+   (``aws_access_key_id``, ``aws_secret_access_key``, ``aws_session_token``,
+   ``aws_account_id``). Redacted values are replaced with ``***``.
+   Off by default.
+
 ``--help``
    Show help message and exit.
 
@@ -40,3 +48,9 @@ Select a config interactively:
 .. code-block:: bash
 
    elhaz config get
+
+Print a config with sensitive values hidden (e.g. for screen sharing):
+
+.. code-block:: bash
+
+   elhaz config get -n prod --obscure

@@ -20,7 +20,7 @@ from elhaz.exceptions import (
 )
 
 from ..constants import state
-from .output import print_error, print_json, print_success
+from .output import obscure, print_error, print_json, print_success
 from .prompts import (
     ask_text,
     ask_yes_no,
@@ -388,6 +388,12 @@ def config_get(
     name: Optional[str] = typer.Option(
         None, "--name", "-n", help="Config name."
     ),
+    obscure_values: bool = typer.Option(
+        False,
+        "--obscure",
+        "-o",
+        help="Redact sensitive field values (RoleArn, credentials, etc.).",
+    ),
 ) -> None:
     """Return config details as formatted JSON."""
 
@@ -414,7 +420,10 @@ def config_get(
         raise typer.Exit(0)
 
     try:
-        print_json(cfg.get())
+        data = cfg.get()
+        if obscure_values:
+            data = obscure(data)
+        print_json(data)
     except ElhazNotFoundError as exc:
         print_error(str(exc))
         raise typer.Exit(1)

@@ -99,6 +99,38 @@ def test_config_get_invalid_yaml_exits_1(
     assert result.exit_code == 1
 
 
+def test_config_get_obscure_redacts_role_arn(
+    monkeypatch, tmp_constants: Constants
+) -> None:
+    _inject_state(monkeypatch, tmp_constants)
+    _write_config(tmp_constants, "demo")
+    result = runner.invoke(app, ["get", "--name", "demo", "--obscure"])
+    assert result.exit_code == 0
+    assert ROLE_ARN not in result.output
+    assert "***" in result.output
+
+
+def test_config_get_obscure_short_flag(
+    monkeypatch, tmp_constants: Constants
+) -> None:
+    _inject_state(monkeypatch, tmp_constants)
+    _write_config(tmp_constants, "demo")
+    result = runner.invoke(app, ["get", "-n", "demo", "-o"])
+    assert result.exit_code == 0
+    assert ROLE_ARN not in result.output
+    assert "***" in result.output
+
+
+def test_config_get_without_obscure_shows_role_arn(
+    monkeypatch, tmp_constants: Constants
+) -> None:
+    _inject_state(monkeypatch, tmp_constants)
+    _write_config(tmp_constants, "demo")
+    result = runner.invoke(app, ["get", "--name", "demo"])
+    assert result.exit_code == 0
+    assert ROLE_ARN in result.output
+
+
 def test_config_remove_missing_file_exits_1(
     monkeypatch, tmp_constants: Constants
 ) -> None:

@@ -41,6 +41,12 @@ Options
 ``--format``, ``-f`` ``json`` | ``env`` | ``credential-process``
    Output format. Default: ``json``.
 
+``--obscure``, ``-o``
+   Redact sensitive credential values in the output. The ``access_key``,
+   ``secret_key``, and ``token`` fields are replaced with ``***``. The
+   ``expiry_time`` field is not affected. Applies to all output formats.
+   Off by default.
+
 ``--help``
    Show help message and exit.
 
@@ -65,3 +71,9 @@ Use elhaz as an AWS ``credential_process`` provider in ``~/.aws/config``:
 
    [profile my-role]
    credential_process = elhaz export -n prod -f credential-process
+
+Export credentials with sensitive values hidden (e.g. for screen sharing):
+
+.. code-block:: bash
+
+   elhaz export -n prod --obscure

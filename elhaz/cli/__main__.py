@@ -31,7 +31,7 @@ from elhaz.models import CredentialProcessModel
 from ..constants import state
 from .config import app as _config_app
 from .daemon import app as _daemon_app
-from .output import print_error, print_json
+from .output import obscure, print_error, print_json
 from .prompts import ask_yes_no, resolve_name
 
 app_help_text = """
@@ -174,6 +174,12 @@ def export_cmd(
         "-f",
         help="Output format: json | env | credential-process.",
     ),
+    obscure_values: bool = typer.Option(
+        False,
+        "--obscure",
+        "-o",
+        help="Redact sensitive credential values in output.",
+    ),
 ) -> None:
     """Export credentials for the specified config.
 
@@ -188,6 +194,9 @@ def export_cmd(
 
     name = resolve_name(name, state, message="Select a config:")
     creds = _fetch_credentials(name)
+
+    if obscure_values:
+        creds = obscure(creds)
 
     if fmt == ExportFormat.json:
         print_json(creds)
