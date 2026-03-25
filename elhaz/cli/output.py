@@ -41,6 +41,10 @@ SENSITIVE_FIELDS: frozenset[str] = frozenset(
         "AccessKeyId",
         "SecretAccessKey",
         "SessionToken",
+        # STS GetCallerIdentity (whoami) response fields
+        "Account",
+        "Arn",
+        "UserId",
     }
 )
 

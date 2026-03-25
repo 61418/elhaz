@@ -197,5 +197,8 @@ def test_sensitive_fields_covers_key_names() -> None:
         "AccessKeyId",
         "SecretAccessKey",
         "SessionToken",
+        "Account",
+        "Arn",
+        "UserId",
     }
     assert expected.issubset(SENSITIVE_FIELDS)
