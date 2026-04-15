@@ -17,7 +17,7 @@ Each config has a unique namespace. Although two config objects may have identic
 What does a config contain?
 --------------------------
 
-A valid config can contain four objects:
+A valid config can contain five objects:
 
 .. toctree::
    :maxdepth: 1
@@ -26,15 +26,16 @@ A valid config can contain four objects:
     STS <sts>
     MFA <mfa>
     Session <session>
+    Meta <meta>
 
 It is **HIGHLY RECOMMENDED** to read through each section above in order to learn more about properly configuring these objects and their respective parameters.
 
 The **only required object** in a config is :ref:`assumerole`, specifically the ``RoleArn`` parameter for the :ref:`assumerole` object.
 
-Accordingly, **a minimally viable config** file looks like this: 
+Accordingly, **a minimally viable config** file looks like this:
 
 .. code-block:: yaml
-  
+
   AssumeRole:
       RoleArn: arn:aws:iam::012345678901:role/your-role
 
@@ -79,7 +80,9 @@ However, **a fully populated** config file is structured like this:
     aws_account_id: str
     aws_access_key_id: str
     aws_secret_access_key: str
-    aws_session_token: str    
+    aws_session_token: str
+  Meta:
+    description: str
 
 How do I create a config?
 -------------------------
@@ -105,3 +108,8 @@ How do I list all existing configs?
 ---------------------------------------
 
 Check the docs for :ref:`elhaz config list <elhaz-config-list>`.
+
+How do I view the metadata for an existing config?
+---------------------------------------------------
+
+Check the docs for :ref:`elhaz config meta <elhaz-config-meta>`.

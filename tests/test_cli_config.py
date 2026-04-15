@@ -165,6 +165,65 @@ def test_config_remove_user_confirms_deletes_file(
     assert "demo" in result.output and "removed" in result.output.lower()
 
 
+CONFIG_WITH_META = {
+    "AssumeRole": {"RoleArn": ROLE_ARN},
+    "Meta": {"description": "My test config"},
+}
+
+
+def _write_config_with_meta(
+    tmp_constants: Constants, name: str = "demo"
+) -> None:
+    """Create a valid YAML config file with Meta under
+    tmp_constants.config_dir."""
+    from elhaz.config import Config
+
+    cfg = Config(name, tmp_constants)
+    cfg.add(CONFIG_WITH_META)
+
+
+def test_config_meta_returns_description(
+    monkeypatch, tmp_constants: Constants
+) -> None:
+    _inject_state(monkeypatch, tmp_constants)
+    _write_config_with_meta(tmp_constants, "demo")
+    result = runner.invoke(app, ["meta", "--name", "demo"])
+    assert result.exit_code == 0
+    assert "My test config" in result.output
+
+
+def test_config_meta_no_meta_section(
+    monkeypatch, tmp_constants: Constants
+) -> None:
+    _inject_state(monkeypatch, tmp_constants)
+    _write_config(tmp_constants, "demo")
+    result = runner.invoke(app, ["meta", "--name", "demo"])
+    assert result.exit_code == 0
+    assert "No metadata found" in result.output
+
+
+def test_config_meta_config_not_found_exits_1(
+    monkeypatch, tmp_constants: Constants
+) -> None:
+    _inject_state(monkeypatch, tmp_constants)
+    result = runner.invoke(app, ["meta", "--name", "nothere"])
+    assert result.exit_code == 1
+    assert "not found" in result.output.lower()
+
+
+def test_config_meta_not_in_session_config(
+    monkeypatch, tmp_constants: Constants
+) -> None:
+    """Meta must not appear in the runtime config used for session init."""
+    from elhaz.config import Config
+
+    _write_config_with_meta(tmp_constants, "demo")
+    cfg = Config("demo", tmp_constants)
+    runtime = cfg.config
+    assert "Meta" not in runtime
+    assert "meta" not in runtime
+
+
 def test_open_in_editor_uses_editor_env(monkeypatch, tmp_path: Path) -> None:
     called_with: list = []
 

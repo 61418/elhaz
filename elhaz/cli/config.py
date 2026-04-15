@@ -276,6 +276,23 @@ def _build_config_interactively(
     """
 
     existing = existing or {}
+
+    # --- Meta ---
+    existing_meta = existing.get("Meta", {})
+    existing_description = existing_meta.get("description", "")
+    if ask_yes_no("Add a description to this config?", default=False):
+        description = ask_text(
+            "Description (optional — Enter to skip):",
+            default=existing_description,
+        )
+        if description:
+            existing["Meta"] = {"description": description}
+        else:
+            existing.pop("Meta", None)
+    else:
+        existing.pop("Meta", None)
+
+    # --- AssumeRole ---
     existing_ar = existing.get("AssumeRole", {})
 
     role_arn = ask_text(
@@ -315,6 +332,9 @@ def _build_config_interactively(
         )
         if session:
             config["Session"] = session
+
+    if meta := existing.get("Meta"):
+        config["Meta"] = meta
 
     return config
 
@@ -464,6 +484,38 @@ def config_update(
     else:
         _open_in_editor(cfg.file_path)
         typer.echo(f"Config file saved to {cfg.file_path}.")
+
+
+@app.command("meta")
+def config_meta(
+    name: Optional[str] = typer.Option(
+        None, "--name", "-n", help="Config name."
+    ),
+) -> None:
+    """Return the metadata for a config as formatted JSON."""
+
+    name = resolve_name(name, state, message="Select a config:")
+    cfg = Config(name, state)
+
+    if not cfg.file_path.exists():
+        print_error(f"Config '{name}' not found.")
+        raise typer.Exit(1)
+
+    try:
+        data = cfg.get()
+    except ElhazNotFoundError as exc:
+        print_error(str(exc))
+        raise typer.Exit(1)
+    except ElhazValidationError as exc:
+        print_error(str(exc))
+        raise typer.Exit(1)
+
+    meta = data.get("Meta")
+    if not meta:
+        typer.echo(f"No metadata found for config '{name}'.")
+        raise typer.Exit(0)
+
+    print_json(meta)
 
 
 @app.command("remove")

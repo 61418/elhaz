@@ -9,6 +9,7 @@ __all__ = [
     "ConfigModel",
     "CredentialProcessModel",
     "ErrorModel",
+    "Meta",
     "MFAModel",
     "RequestModel",
     "ResponseModel",
@@ -26,6 +27,17 @@ actions = Literal["add", "credentials", "kill", "list", "remove", "whoami"]
 
 class _BaseModel(BaseModel):
     model_config = ConfigDict(extra="forbid")
+
+
+class Meta(_BaseModel):
+    """Model for metadata about the configuration."""
+
+    description: Optional[str] = None
+
+
+# Alias used in ConfigModel to prevent the field name ``Meta`` from shadowing
+# the ``Meta`` class during Pydantic's annotation resolution (Python 3.14+).
+_MetaType = Meta
 
 
 class TagModel(_BaseModel):
@@ -98,6 +110,7 @@ class ConfigModel(_BaseModel):
     STS: Optional[STSModel] = None
     MFA: Optional[MFAModel] = None
     Session: Optional[SessionModel] = None
+    Meta: Optional[_MetaType] = None
 
 
 class CredentialProcessModel(BaseModel):

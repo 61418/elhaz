@@ -37,6 +37,8 @@ Commands
      - Display a config as formatted JSON.
    * - :ref:`list <elhaz-config-list>`
      - List all config names.
+   * - :ref:`meta <elhaz-config-meta>`
+     - Print the metadata for a config.
    * - :ref:`remove <elhaz-config-remove>`
      - Delete a config.
    * - :ref:`update <elhaz-config-update>`
@@ -48,5 +50,6 @@ Commands
    elhaz config add <elhaz-config-add>
    elhaz config get <elhaz-config-get>
    elhaz config list <elhaz-config-list>
+   elhaz config meta <elhaz-config-meta>
    elhaz config remove <elhaz-config-remove>
    elhaz config update <elhaz-config-update>
