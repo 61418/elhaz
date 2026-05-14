@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.3](https://github.com/61418/elhaz/compare/v0.5.2...v0.5.3) (2026-05-14)
+
+
+### Documentation
+
+* README update. ([95617c3](https://github.com/61418/elhaz/commit/95617c3f2adb49ac86cdde538d16d009eeed12c0))
+* README update. ([4e04a08](https://github.com/61418/elhaz/commit/4e04a08eabe7666ff61015820f808ed3e434c935))
+
 ## [0.5.2](https://github.com/61418/elhaz/compare/v0.5.1...v0.5.2) (2026-04-28)
 
 
