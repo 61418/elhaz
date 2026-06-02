@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.4](https://github.com/61418/elhaz/compare/v0.5.3...v0.5.4) (2026-06-02)
+
+
+### Documentation
+
+* Recognizing feature at fwd:cloudsec 2026 in README ([7ec6d7f](https://github.com/61418/elhaz/commit/7ec6d7f1901beca94f5e76c4984c8001478ef75e))
+* Updating README with feature at fwd:cloudsec North America 2026 conference ([7f5672f](https://github.com/61418/elhaz/commit/7f5672f3d19c71a455d8f3c4e24dc7c8d9dc83c6))
+
 ## [0.5.3](https://github.com/61418/elhaz/compare/v0.5.2...v0.5.3) (2026-05-14)
 
 
