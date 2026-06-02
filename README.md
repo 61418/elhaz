@@ -116,7 +116,7 @@ For technical details, check the [CLI docs](https://61418.io/elhaz/cli/index.htm
 
 ## Recognition and Testimonials
 
-elhaz was featured at the [fwd:cloudsec North America 2026 conference](https://youtu.be/I9gk51TKmq4?si=_zHquKuhqG7fo5EU) at the Meyenbauer Center in Bellevue, WA on June 1st, 2026.
+elhaz was featured at the [fwd:cloudsec North America 2026 conference](https://youtu.be/I9gk51TKmq4?si=_zHquKuhqG7fo5EU) at the Meydenbauer Center in Bellevue, WA on June 1st, 2026.
 
 In May 2026, elhaz was featured by [TL;DR Sec newsletter](https://tldrsec.com/p/tldr-sec-327).
 
