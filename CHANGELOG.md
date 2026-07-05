@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.6](https://github.com/61418/elhaz/compare/v0.5.5...v0.5.6) (2026-07-05)
+
+
+### Documentation
+
+* fwdcloudsec conference video update ([e5001e6](https://github.com/61418/elhaz/commit/e5001e680fd331e33ff68f359529bdfa38ce7ad4))
+
 ## [0.5.5](https://github.com/61418/elhaz/compare/v0.5.4...v0.5.5) (2026-07-05)
 
 
