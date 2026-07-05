@@ -116,11 +116,11 @@ For technical details, check the [CLI docs](https://61418.io/elhaz/cli/index.htm
 
 ## Recognition and Testimonials
 
-elhaz was featured at the [fwd:cloudsec North America 2026 conference](https://youtu.be/I9gk51TKmq4?si=_zHquKuhqG7fo5EU) at the Meydenbauer Center in Bellevue, WA on June 1st, 2026.
+elhaz was [presented](https://youtu.be/15i9o08GHvw?si=sDhpLT0vUMDKESAt&t=789) at the [fwd:cloudsec North America 2026 conference](https://fwdcloudsec.org/conference/north-america/).
 
-In May 2026, elhaz was featured by [TL;DR Sec newsletter](https://tldrsec.com/p/tldr-sec-327) and [AWS Security Digest](https://awssecuritydigest.com/past-issues/aws-security-digest-260).
+elhaz has been featured by [TL;DR Sec newsletter](https://tldrsec.com/p/tldr-sec-327) and [AWS Security Digest](https://awssecuritydigest.com/past-issues/aws-security-digest-260).
 
-In this [blog post](https://engseclabs.com/blog/agent-credential-isolation/), EngSecLabs cleverly mounts the Unix socket managed by elhaz to a Docker container in order to sandbox an AI agent.
+In [this blog post](https://engseclabs.com/blog/agent-credential-isolation/), EngSecLabs cleverly mounts the Unix socket managed by elhaz to a Docker container in order to sandbox an AI agent.
 
 ## License
 
