@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.5](https://github.com/61418/elhaz/compare/v0.5.4...v0.5.5) (2026-07-05)
+
+
+### Documentation
+
+* AWS Security Digest mention in the README ([e591571](https://github.com/61418/elhaz/commit/e591571d188c51753e11965b74caddd5c384f7b6))
+
 ## [0.5.4](https://github.com/61418/elhaz/compare/v0.5.3...v0.5.4) (2026-06-02)
 
 
